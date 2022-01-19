@@ -39,3 +39,8 @@ Notes and in class info for C S 2413
       
       Data structures goal is to access info/goal quickly and optimize time
       Data structures is useless without Algorithms (they go hand-in-hand)
+      Do not expect help debugging code but if you have questions about the structure they can help
+      Make sure you can describe what you have done when you ask for help then when they help go back to modify code.
+      We use C++ because it is the most proper one for analyzing structures 
+      Comment your code for both yourself and the TA's/Professor
+   
