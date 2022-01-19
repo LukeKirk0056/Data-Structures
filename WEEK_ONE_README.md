@@ -1,7 +1,10 @@
 # Data-Structures2413
 Notes and in class info for C S 2413
 
+First, time should be invested in the beginning before you hit midway through semester and the coursework gets heavier
+
 ## 1-19-22
+  
   * Canvas
     * Take advantage of canvas discussion boards
     * Do not ask questions that contain code
@@ -44,3 +47,4 @@ Notes and in class info for C S 2413
       We use C++ because it is the most proper one for analyzing structures 
       Comment your code for both yourself and the TA's/Professor
    
+      
