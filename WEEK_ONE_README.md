@@ -31,12 +31,11 @@ Notes and in class info for C S 2413
   
   For project think about this situation: 
   
-  * everyone write their name on a board
-  * pick a random place on the board to write your name
-  * What would i have to do get all the names of everyone written on the board?
+  * everyone write their name on a board and pick a random place on the board to write your name
+  * What would I have to do get all the names of everyone written on the board?
     * Could go through all names and worst case we'll arrive at the name were looking for via T or F
       * If names were alphabetical order we could binary search
-      * ALgorithms/Recursion
+      * Algorithms/Recursion
       
       Data structures goal is to access info/goal quickly and optimize time
       Data structures is useless without Algorithms (they go hand-in-hand)
