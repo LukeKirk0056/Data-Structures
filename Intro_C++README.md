@@ -100,6 +100,98 @@
   * The base class and its subclasses form a heirarchy with the class at the top and the subclasses below
   * Furthermore, each of the subclasses may, themselves, be base classes for their own subclasses, and so on
 
+## Sample code
+### Hello World
 
+``` C++
+#include <iostream>
+using namespace std;
+
+int main ()
+{
+  cout << "Hello World" << endl;
+  return 0;
+}
+```
+
+## C++ has 3 categories of data types
+
+  ### Primitive types - bool/ean, char, signed char, unsigned char, short int, unsigned int, int, long, float, long double
+    * In any language are defined by the people who constructed the language (cannot create a new primitive data type)
+    * The **char, short, int, and long** are all integer types, which hold integer values within the range allowed by the storage space
+    * The **char and short** types require less storage than an int but they are promoted to int if neccessary before use in any operations
+    * Some C++ compilers dont have the **bool** type which holds **true or false** variables
+      * So integer variables can be used to represent the boolean variables, with 0 representing false and anything else representing true.
+    * every character of a char corresponds to some integer value (ascii)
+    * Theres reserved words, and logical operators/ special characters
+  
+  ### Classes -
+    *  **Classes** can be related in one or more **hierarchies** but primitive types do not belong to any heirarchy
+  
+  ### Pointers - piece of data that points to some place in memory
+    * Pointers contain the memory addresses of the variables
+      * it is possible to perform some arithmetic on pointers, bit in general they do not participate in most operations possible on
+    * Pointers are stored on the stack, an objected pointed at by a pointer is created on the heap. 
+      * See: https://tinyurl.com/4s878zdc
+
+  ### Identifiers - the names given by programmers to objects in a program
+    * In C++, identifiers can be of any length
+    * They must start with a ***letter or an underscore***
+    * if it started with a number the compiler would assume it is a number youre inputting
+      * Digits are permitted after the first character but not as the first character 
+    * C++ is case senstitive
+      * So stack and Stack are distinct identifiers
+
+  ### Variable Declaration
+  * Variable -> type -> identifier --(initial Value)-> ; (repeat assigning new value) ->
+
+### Function Definition
+  * Function -> return type -> identifier -> (parameters) -> function body
+  * Functions can return a value
+  * The word return causes an immediate jump out of the method.
+  * If the function is declared as a non-void type, then return must be followed by a value of the proper type; otherwise it must not.
+  * Function declared as returning non-void type must terminate through a return statement.
+  ```
+  #include <iostream>
+using namespace std;
+void voidFunc1()
+{
+cout << "voidFunc1()" << endl
+//it is ok to simply end
+}
+```
+```
+  #include <iostream>
+using namespace std;
+void voidFunc1()
+{
+cout << "voidFunc1()" << endl
+return; // note you cannot return an integer value ( if the return type was int you could return an int value)
+}
+```
+```
+#include <iostream>
+using namespace std;
+int intFunc1()
+{
+cout << "voidFunc1()" << endl
+return 0; // you can only return nothing in a void function
+}
+```
+### Pass by copy
+* the output from the above program shows that myval was not changed by changeFunc(), even tho it was passed to ChangeFunc() by main
+* This is an example of pass-by-copy parameter passing
+* myval is a local variable declared by the main function
+* it should be noted that val and myval are distinct entities with seperate memory for them
+* the only connection i sthat val got its value from my val
+* thus, there is no reason why a change in val would have any effect on myval
+
+### Pass by reference
+* Pass by refernce is used to overcome the problems which were encountered when pass by copy was used
+* in this case we want the function that is called
+
+* Advantages
+  * The effciency problem: 
+       
 
 
