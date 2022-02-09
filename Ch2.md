@@ -136,4 +136,17 @@ Outpit: the factorial of n denoted by n! = n(n-1)(n-2)
 2. RETURN n * Factorial(n-1)
 * The time complexity of the above algorithm is O(n)
 
+Greedy Algorithm
+  * A greedy algorithm works by making a decision that seems most promising at any given time;
+  * it never reconsiders this decision
+
+Divide and conquer algorithms
+  * Divide and conquer is a **top-down technique** for designing algorithms
+  * It first decomposes an instance of a problem into a number of smaller sub-instances of the same problem, solving independently each of the solutions to obtain the solution of the original instance
+
+Dynamic Programming
+  * dynamic programming is **bottom-up technique**
+  * We start by obtaining solutions to the smallest sub instances and repeatedly combine the solutions to get solutions for larger instances until finally we arrive at the solution of the original instance
+  
+
 
