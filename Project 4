@@ -1,0 +1,135 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>    // used for remove
+#include <math.h>
+
+using namespace std;
+
+template <class DT>
+
+class HashTableVector
+{
+protected:
+    vector< vector < DT > >* htable;		// vector of vectors hash table
+
+public:
+    HashTableVector<DT>();					//Default constructor
+    ~HashTableVector(); 					//Destructor
+    void insert(string str); 				//Insert a string into the right spot in the hash table
+    int hashing(char a); 					//Hash function - returns the key
+    void displayTable(); 					//display the contents of hash table
+    void remove(string str); 				//removes a name from hash table
+};
+
+template<class DT>
+HashTableVector<DT>::HashTableVector()
+{
+    htable = new vector <vector<string>>(1);
+    // sets default size to 1 for the hashtable
+}
+
+template<class DT>
+HashTableVector<DT>::~HashTableVector() //destructor for htable
+{
+    delete htable; // delete hashtable
+}
+
+template<class DT>
+int HashTableVector<DT>::hashing(char a) // hashing is used to take large set of data into a smaller function like the htable
+{
+    return (a - 'A'); //subtracts the inputted char value from ascii value A to hash
+}
+
+template<class DT>
+void HashTableVector<DT>::insert(string str)
+{
+    int index = hashing(str[0]); //calls hashing method to check and insert the string according to the first char of the string
+    if(index >= htable-> size())
+    {
+        htable->resize(index+1);    //checks to make sure the index exists and is larger than the size of the table,
+                                    // and then it resizes it to be one larger as it gets added.
+    }
+    htable->at(index).push_back(str); //takes the index and inserts the input string at that index
+}
+
+template<class DT>
+void HashTableVector<DT>::displayTable() {
+    for (int i = 0; i < htable->size(); i++) {
+        cout << i << ": "; // outputs all the indexes
+
+        if(!htable->at(i).empty()) // runs while htable is not empty
+        {
+            cout << htable->at(i).at(0); // prints the letter associated with index i
+
+            for(int j = 1; j < htable->at(i).size(); j++) {
+                cout << " => " << htable->at(i).at(j); // if a 2nd element beginning with the same char value is added
+                // it prints it out and adds and arrow ti indicate that is now what is shown in there
+            }
+            cout<< endl;
+        }
+        else {
+            cout << endl; // returns the next value on a new line when nothing is added
+        }
+    }
+}
+
+template<class DT>
+void HashTableVector<DT>::remove(string str)
+{
+
+    int index = hashing(str[0]);//calls hashing method to check and remove the string according to the first char of the string
+    vector<string>::iterator i; //i is iterator reading through the vector
+    if (index >= htable->size()) {
+        cout << "element to be removed not found: " << str << endl; // error message in case the element being removed
+        // does not exist in the data structure
+        return;
+    }
+    for (i = htable->at(index).begin(); i != htable->at(index).end(); i++) //iterates form beginning to end of the htable
+    {
+        if (*i == str)
+        {
+            break; //breaks if the string of i equals the string being input
+        }
+    }
+    if (i != htable->at(index).end())
+    {
+        htable->at(index).erase(i); // removes the string if the iterator finds it at the index as many times as it may be added
+    }
+}
+int main()
+{
+    string tempName; 						// to store the name using cin
+    HashTableVector<string>* h1 = new HashTableVector<string>(); // hash table object for vector
+    char option; 							// to store the option from redirected input
+    while(cin >> option)
+    {
+        switch(option){
+            case 'D':
+            {
+                //calls display method
+                h1->displayTable();
+                break;
+            }
+            case 'I':
+            {
+                cin >> tempName;
+                cout << "adding " << tempName << endl;
+                //calls insert method
+                h1->insert(tempName);
+                break;
+            }
+            case 'R':
+            {
+                cin >> tempName;
+                cout << "removing " << tempName << endl;
+                //call remove method
+                h1->remove(tempName);
+
+                break;
+            }
+        } // switch case
+    } // while loop
+    delete h1; // deletes the hashtable in main
+    return 0;
+}
