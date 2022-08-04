@@ -6,11 +6,6 @@ using namespace std;
 
 // ----------------------------------------------------------------
 
-
-
-/*
- *    Data Structures Featuring C++  (c) 2022 Katia Papakonstantinopoulou, based on source of Prof Sridhar Radhakrishnan
- */
 int max(int a, int b)
 {
     if (a < b) return b;
