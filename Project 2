@@ -1,0 +1,708 @@
+#include <iostream>
+
+using namespace std;
+
+// used to empty a given string A of length n
+void emptyString(char* A, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        A[i] = '\0';
+    }
+}
+
+// copy a string A to B of length n
+void stringCopy(char* A, int n, char* B)
+{
+    for (int i = 0; i < n; i++)
+    {
+        B[i]= A[i]; // effects if this prints url or not
+    }
+}
+
+// return the length of a given string A
+int stringLength(char* A) {
+    int size = 0;
+    while (A[size] != '\0') size++;
+    return size; //size is the last index position
+}
+
+class myString; // myString class displays points to URLs to filter out list in main, is called in a loop to count "mySetOfURLs: 28"
+
+class myString {
+    friend ostream& operator<<(ostream& s, myString& A);
+protected:
+    char* strArray;
+    int size;
+    void strCpy(char* A, char* B, int n);
+public:
+    myString();
+    myString(char* inpStr);
+    myString(myString& B);
+    int Size();
+    char* getWord();
+    bool operator==(myString& B);
+    bool operator>(myString& B);
+    bool operator<(myString& B);
+    myString& operator=(myString& B);
+    myString& operator=(char* B);
+};
+
+// outputs a given string A
+ostream& operator<<(ostream& s, myString& A) {
+    s << A.strArray;
+    return s; //allows us to print contents of an array
+}
+
+// default constructor - initializes with a NULL as the first character
+myString::myString()
+{
+    size = 0;
+    strArray = new char[1];
+    strArray[0] = '\0'; //is this necessary
+}
+
+// non default constructor - initialize object with an existing string
+myString::myString(char* inpStr)
+{
+    int i = 0;
+    while (inpStr[i] != '\0') i++; // while b has characters i increases for each char
+    size = i; // sets size to the number of non-null chars in new
+    strArray = new char[size]; // creates new array the size of the number of chars
+    emptyString(strArray, size + 1);
+    for (int j = 0; j < size; j++)
+        strArray[j] = inpStr[j]; // replaces string copy method to copy, copies contents
+}
+
+// non default constructor - initialize object with an existing myString object
+myString::myString(myString& B) {
+    delete[] strArray;
+    strArray = NULL;
+    size = B.size;
+    strArray = new char[size];
+    emptyString(strArray, size + 1);
+    stringCopy(B.strArray, size, strArray);
+}
+
+void myString::strCpy(char* A, char* B, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        B[i] = A[i]; // assigns each char index by index ot a position in the array to contain the string
+    }
+}
+
+char* myString::getWord()
+{
+    return strArray; // returns the link/string contained in strArray
+}
+
+// getter for size of myString
+int myString::Size()
+{
+    return size; //size = B.size this is returning the size of the string given.
+}
+
+// overloading = operator - initialize object with an existing string
+myString &myString::operator=(char *B)
+{
+    int i = 0;
+    while (B[i] != '\0') i++; // while b has characters i increases for each char
+    size = i; // sets size to the number of non-null chars in new
+    strArray = new char[size]; // creates new array the size of the number of chars
+    emptyString(strArray, size+1);
+    for (int index = 0; index < size; index++ )
+    {
+        strArray[index] = B[index]; // replaces string copy method to copy, copies contents
+    }
+    return *this;
+}
+
+// overloading = operator - initialize object with an existing myString object
+myString& myString::operator=(myString& B) {
+    delete[] strArray; // deletes previous contents of string
+    strArray = NULL;
+    size = B.Size(); // changes value of size to the new strings number of chars
+    strArray = new char[size]; // initializes strArray to that new strings number of chars
+    emptyString(strArray, size + 1);
+    strCpy(B.getWord(), strArray,size ); // makes a copy of the newly created string
+    return *this; // returns this string
+}
+
+// checking if two myString objects are the same - return true or false
+bool myString::operator==(myString& B)
+{
+        for (int i = 0; i < Size(); i++) {
+            if (this->getWord()[i] != B.getWord()[i])  // if the word being stores is not equal to the new word being checked return false
+            {
+                return false;
+            }
+        }
+        return true; // if it is true then the values must be equal
+}
+
+// comparison of myString A if less than myString B - return true or false
+bool myString::operator<(myString& B)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        if (this->strArray[i] < B.strArray[i])
+        {
+            return true; // returns true if the original value *this* is less than the new myString&B
+        }
+        else if (this->strArray[i] > B.strArray[i])
+        {
+            return false; // returns false if the original value *this* is NOT less than the new myString&B
+        }
+    }
+    return false; // returns false if they are also equal
+}
+
+// comparison of myString A if greater than myString B - return true or false
+bool myString::operator>(myString& B)
+{
+    for (int i = 0; i < size; ++i) {
+        if (this->strArray[i] > B.strArray[i]) {
+            return true; // returns true if the original value *this* is greater than the new myString&B
+        }
+        else if (this->strArray[i] < B.strArray[i]) {
+            return false;// returns false if the original value *this* is less than the new myString&B
+        }
+    }
+    return false; // returns false if they are also equal
+}
+
+bool isURL(char* str) // checks if the input chars are a valid url string
+{
+    const char* URL = "http://";
+    const char* SECURE_URL = "https://"; // strings containing the elements to create a good url
+    int lengthExpectedURL = 7; // amount of chars in http://
+    bool thisIsURL = false; // boolean to check if it is a valid URL
+
+    if (str[4] == 's')
+    {
+        thisIsURL = true;// check case, in case it is not a secureURL this verifies it is
+        lengthExpectedURL++;// increases length expected by 1 to account for 's'
+    }
+    for (int i = 0; i < lengthExpectedURL; i++) // test cases where it must be a valid URL
+        // and the input string has to be equal to what is in the char array
+    {
+        if (thisIsURL && str[i] != SECURE_URL[i]) return false;
+        if (!thisIsURL && str[i] != URL[i]) return false;
+    }
+    return true; // returns true if it is a validURL
+}
+
+char* getNextURL()  {
+    char* str = new char[50]; //assumes a max URL size of 50
+    emptyString(str, 50);
+    char c;
+    int i = 0;
+    int countDollars = 0; // counts dollar signs detected at bottom
+    //read until the next white space or line-break
+    while (!cin.eof())  //!cin.eof specifies it is reading while we are NOT at the end of the file
+    {
+        cin.get(c);
+        if (!cin.eof()) //if we are not at the end of the file
+        {
+            if ((c != '\n') && (c != ' ')) // if c being read is not a new line and also is not a "space"
+            {
+                if (((c >= 'a') && (c <= 'z')) ||   // determines if c is a lowercase char
+                    ((c >= 'A') && (c <= 'Z')) ||   // determines if c is and uppercase char
+                    ((c >= '0') && (c <= '9')) ||   // determines if c is a number char
+                    (c >= ':') || (c >= '/') || (c >= '.') || (c >= '_'))   // determines if c is one of these special characters
+                    str[i++] = c;
+            }
+
+            else if ((c == '\n') && (i > 0)) // if c is a new line and has a value
+            {
+                if (isURL(str)) // calls isURL method to detect if string "http:// or https:// is detected
+                {
+                    return str;
+                }
+                else // if it is not a URL empty contents of the array
+                {
+                    emptyString(str, 50);
+                    i = 0;
+                }
+            }
+            else if ((c == ' ') && (i > 0)) // if c has a space and something has been stored as i
+            {
+                if (isURL(str)) // calls isURL method to detect if string "http:// or https:// is detected
+                {
+                    return str;
+                }
+                else // if it is not a URL empty contents of the array
+                {
+                    emptyString(str, 50);
+                    i = 0;
+                }
+            }
+            if (c == '$') // searching for file break
+            {
+                countDollars++; // increments dollar signs detected
+                if (countDollars == 4) // if there is 4 dollar signs detected break from the current read
+                {
+                    break;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class setOfURLs {
+private:
+    int binarySearchAndInsert(myString& u);
+    int binarySearch(myString& key, int top, int mid, int bottom);
+protected:
+    myString* _URLs;
+    int* _frequencies;
+    int _size;
+
+public:
+    setOfURLs();
+    setOfURLs(int numOfWords);
+
+    myString* get_Words();
+    int* get_Freq();
+    int get_size();
+
+    void setSize(int i);
+
+    void addURL(myString& u);//insert word w into the array _URLs - keep it sorted alphabetically
+    void sortFreq(); //sort words array based on frequency
+    void sortURLs(); //sort words array alphabetically
+    void display(); //print word followed by a colon followed by a single space and frequency
+    setOfURLs* removeURLs(myString* URLsToFilterOut, int numURLsToFilterOut); //URLsToFilterOut from _URLs array
+    ~setOfURLs();
+};
+
+// default constructor - initializes with no words
+setOfURLs::setOfURLs()
+{
+    _size = 0;
+    _URLs = new myString[0];
+    _frequencies = new int[0];
+}
+
+// non default constructor - initializes with a known number of words
+setOfURLs::setOfURLs(int numOfWords)
+{
+    _size = numOfWords;
+    _URLs = new myString[numOfWords];
+    _frequencies = new int[numOfWords];
+}
+
+// returns the _URLs array containing the strings of links
+myString* setOfURLs::get_Words()
+{
+    return _URLs;
+}
+
+//returns the _frequencies array that counts how often a link was detected
+int* setOfURLs::get_Freq()
+{
+    return _frequencies;
+}
+
+//returns size to track how large an array should have to be
+int setOfURLs::get_size()
+{
+    return _size;
+}
+
+//setter for value size to the value specified
+void setOfURLs::setSize(int i)
+{
+    _size = i;
+}
+
+// print the bag of words in dictionary format
+void setOfURLs::display()
+{
+    cout << _size << endl;
+    for (int i = 0; i < _size; i++) {
+        cout << get_Words()[i]<< ": " << get_Freq()[i] << endl;
+    } // method call to correctly display the setOfURLs
+}
+
+// sort the _URLs and _frequencies based on frequencies
+void setOfURLs::sortFreq()
+{
+    int tempInt; // temp value to store the content at index of the _frequencies array
+    myString tempString; // temp value to store the content at index of the _URLs array
+
+    for (int i = 0; i < _size - 1; i++)
+    {
+        for (int j = 0; j < _size - i - 1; j++)
+        {
+            if (get_Freq()[j] > get_Freq()[j + 1]) // bubble sort method
+            {
+                tempString = _URLs[j].getWord();
+                tempInt = _frequencies[j];  // take values at index j and hold them in temps
+                _URLs[j] = _URLs[j + 1].getWord();
+                _frequencies[j] = _frequencies[j + 1];  //shifts the value that comes one after current index to current
+                _URLs[j + 1] = tempString.getWord();
+                _frequencies[j + 1] = tempInt; // move stored temp values to a position one later in the arrays
+            }
+        }
+    }
+}
+
+// sort the _URLs and _frequencies, alphabetically
+void setOfURLs::sortURLs()
+{
+    myString stringTemp; // temp value for holding swapped string
+    for (int i = 0; i < _size - 1; i++)
+    {
+        for (int j = 0; j < _size - i - 1; j++)
+        {
+            if (_URLs[j] > _URLs[j + 1])    // bubble sort
+            {
+                swap(_frequencies[j], _frequencies[j + 1]); // swaps frequencies if the previous frequency value is greater than the later one
+                stringTemp = _URLs[j].getWord();
+                _URLs[j] = _URLs[j + 1].getWord();
+                _URLs[j + 1] = stringTemp.getWord(); // manually swaps the myString with the stored temp value
+            }
+        }
+    }
+}
+
+setOfURLs* setOfURLs::removeURLs(myString* URLsToFilterOut, int numURLsToFilterOut)
+{
+    myString* resizeURLs = new myString[get_size() - numURLsToFilterOut]; // new url set sized to not include filtered out URLs
+    int* _URLsRemoved = new int[get_size() - numURLsToFilterOut]; // create an array of the URLs being removed
+    bool remove; // boolean indicating if a value should be removed or not
+
+    int index = 0;
+
+    for (int i = 0; i < get_size(); i++) {
+        remove = true;
+
+        for (int j = 0; j < numURLsToFilterOut; j++) // removes the URL from the array URLs if it is contained in list to filter out
+        {
+            if (_URLs[i] == URLsToFilterOut[j]) remove = false;
+        }
+
+        if (remove)
+        {
+            resizeURLs[index] = _URLs[i]; //copies the URL values into the new smaller array from the _URLs array
+            _URLsRemoved[index] = _frequencies[i]; // updates frequencies used to account for removed frequencies
+            index++;
+        }
+    }
+    _URLs = resizeURLs; // copies all contents of the resizeURLs into _URLs
+    _frequencies = _URLsRemoved; // copies all contents of the _URLsRemoved array into _frequencies
+    _size = _size - numURLsToFilterOut; // changes value of size to the new number of URLs to filter out
+    sortURLs();
+    return this; // returns this method for sort
+}
+
+//Deconstruct for class SetOfURLs
+setOfURLs::~setOfURLs()
+{
+    delete [] _URLs;
+    delete [] _frequencies;
+    _size = NULL; // delete elements to free up their allocated memory slots
+}
+
+// to search for a given word in _URLs - returns 0 if not found, 1 if found
+int setOfURLs::binarySearchAndInsert(myString& wordToFind)
+{
+    int high = get_size() - 1; // sets value max at the last index of an array
+    int mid = high / 2; // formula for calculating value at exact middle
+    int low = 0; // sets low value of 0, aka smallest value
+
+    int positionAt = binarySearch(wordToFind, high, mid, low); // uses int returned form binary search to determine if found or not
+    if (positionAt != -1)
+    {
+        _frequencies[positionAt]++; // increases frequency of link when it is found in the search
+        return 1; // int to be used in addURLs
+    }
+    else return 0; // returns 0 if it is found
+}
+
+//helper method that does binary search to utilize in method above
+int setOfURLs::binarySearch(myString& search, int high, int mid, int low)   {
+
+    while (low <= high)
+    {
+        if (_URLs[mid] < search)    // index of the word is greater than the current midpoint
+        {
+            low = mid + 1; // cuts off exactly half of the values below the searched for word
+        }
+        else if (_URLs[mid] > search)   // index of the word is less than the current midpoint
+        {
+            high = mid - 1; // cuts off exactly half of the values above the searched for word
+        }
+        else
+        {
+            return mid;// in this case it is equal to the value found
+        }
+        mid = (high + low) / 2; // recalculate the value of mid
+    }
+    return -1; // returns -1 if not found
+}
+
+// method to add words to the setOfURLs object
+void setOfURLs::addURL(myString& newWord)
+{
+    int wasFound = binarySearchAndInsert(newWord); // returns value 1 or 0 to indicate whether or not it was found
+    if (!wasFound) // if value is not found in the _URLs array already we need to add it
+    {
+        _size++; // increase size to account for inserting new URL
+        myString *duplicateURL = new myString[get_size()]; // new array with one index more than original _URLs array
+        int *duplicateInt = new int [get_size()];// new array with one index more than original _frequencies array
+
+        for (int i = 0; i < get_size() - 1; i++)
+        {
+            duplicateURL[i] = _URLs[i]; // copies all contents into new expanded array from original _URLs
+            duplicateInt[i] = _frequencies[i]; // copies all contents into new expanded array from original _frequencies
+        }
+        duplicateURL[get_size() - 1] = newWord; // inserts new word at last index in array
+        duplicateInt[get_size() - 1] = 1; // sets its frequency to 1 for first time it is found
+        _URLs = new myString[get_size()]; // recreates _URLs array with new size
+        _frequencies = new int[get_size()]; // recreates _frequencies array with new size
+        _URLs = duplicateURL; // copies all contents from duplicate array into newly resized _URLs
+        _frequencies = duplicateInt; // copies all contents from duplicate array into newly resized _frequencies
+    }
+    sortURLs(); // calls sort to ensure the array is in alphabetical order
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class URLLinks //:setOfURLs inherits URLs
+{
+    friend ostream& operator << (ostream& s, URLLinks& A);
+
+protected:
+    myString URL;
+    int numLinks;
+    URLLinks** hyperLinks;
+public:
+    URLLinks();
+    URLLinks(myString& x, int n);
+    ~URLLinks();
+    int getNumLinks();
+    URLLinks* getHyperLink(int i);
+    myString& getURL();
+    void addSite(myString& t);
+    void addNeighbor(URLLinks& link);
+    void setNeighbors(int nei);
+    int insertLinks;
+    int count;
+    void Neighboring(URLLinks &link);
+
+    int getNumLinked();
+};
+
+ostream& operator << (ostream& s, URLLinks& A)
+{
+    s << A.getURL();
+    return s; //allows us to print contents of a URLLinks
+    // used from myString
+}
+
+//constructor for URLLinks creating variables
+URLLinks::URLLinks()
+{
+    myString* fillArray= new myString(); // new myString array
+    URL = *fillArray; // creates URL with myStrings
+    numLinks = 0;
+    hyperLinks = NULL;
+    insertLinks = 0; // initializing values to 0/NULL
+    //create an array of pointers
+}
+
+// assigns values to variables created in previous constructor
+URLLinks::URLLinks(myString& x, int n)
+{
+    URL = x; // reads as the url string
+    numLinks = n; // the number of links it contains
+    hyperLinks = new URLLinks*[numLinks]; // created new value to track what links are associated with a URL
+    for(int i = 0; i < numLinks; i++) {
+        hyperLinks[i] = new URLLinks[numLinks]; // Fill hyperlinks array with proper values of numLinks
+    }
+
+}
+
+//getter returning URL
+myString& URLLinks::getURL()
+{
+    return URL;
+}
+
+//getter returning value for numLinks
+int URLLinks::getNumLinks()
+{
+    return this->numLinks;
+}
+
+//getter retrieving insertLinks
+int URLLinks::getNumLinked()
+{
+    return this->insertLinks;
+}
+
+// returns hyperLinks at index i that is input
+URLLinks* URLLinks::getHyperLink(int i)
+{
+    return hyperLinks[i];
+}
+
+//URLLinks deconstructor
+URLLinks::~URLLinks()
+{
+    URL = NULL;
+    numLinks = NULL;
+    delete[] hyperLinks; // deletes/ sets all values to NULL
+    }
+
+//adds the (url) string t into URL containing all links
+void URLLinks::addSite(myString& t)
+{
+    URL = t.getWord();
+}
+
+void URLLinks::setNeighbors(int nei)
+{
+    numLinks = nei; //sets number of links equal to number of neighbors
+    delete[] hyperLinks;
+    hyperLinks = new URLLinks*[numLinks]; // creates new Hyperlinks array containing numLinks
+    count = 0; // resets value count
+}
+
+void URLLinks::addNeighbor(URLLinks& link)
+{
+    {
+        hyperLinks[count] = new URLLinks(link.URL, numLinks); // takes counter/index to add in URL and associated numLinks
+        count++; //increments count
+    }
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+int main() {
+    int numURLsToFilterOut;
+    char *url;
+    myString *urlString;
+    int numPages;
+    int pageNo;
+    int numNeighbors;
+    int neighbor;
+
+    //read the first number from the file that contains the number of stop words
+    cin >> numURLsToFilterOut;
+    cout << "Number of URLs to filter out: " << numURLsToFilterOut << endl;
+
+    myString *URLsToFilterOutList = new myString[numURLsToFilterOut]; // this creates myString Objects
+//read the stop words
+    for (int i = 0; i <
+                    numURLsToFilterOut; i++)    //this will loop and can/should? call addURL()... and potentially increment size (variable in myString) in this method
+    {
+        url = getNextURL();
+        URLsToFilterOutList[i] = url; //calls the overloaded = operator on myString class
+    }
+    //Now read a text and put them in the setOfURLs instance.
+    setOfURLs *mySetOfURLs = new setOfURLs();
+
+    url = getNextURL();
+    while (url != NULL) {
+        urlString = new myString(url); //create a myString array with the URL
+        (*mySetOfURLs).addURL(*urlString);
+        url = getNextURL();
+    }
+    /* this should display the URL and frequency;
+     * note that because you are using binary search and insert the URLs will
+     * be sorted alphabetically
+     */
+
+    cout << endl;
+    cout << "Input display:" << endl;
+    cout << "mySetOfURLs: ";
+    (*mySetOfURLs).display();
+    (*mySetOfURLs).sortFreq();
+    cout << endl;
+    cout << "\n" << "mySetOfURLs - Sorted based on frequency:" << endl;
+    cout << "mySetOfURLs: ";
+    (*mySetOfURLs).display();
+    (*mySetOfURLs).sortURLs();
+    cout << endl;
+    cout << "\n" << "mySetOfURLs - Sorted alphabetically:" << endl;
+    cout << "mySetOfURLs: ";
+    (*mySetOfURLs).display();
+    setOfURLs *newSetOfURLs = (*mySetOfURLs).removeURLs(URLsToFilterOutList,
+                                                        numURLsToFilterOut); // new parameter added here
+    cout << endl;
+    cout << "newSetOfURLs - Sorted alphabetically:" << endl;
+    cout << "newSetOfURLs: ";
+    (*newSetOfURLs).display();
+    (*newSetOfURLs).sortFreq();
+    cout << endl;
+    cout << "\n" << "newSetOfURLs - Sorted based on frequency:" << endl;
+    cout << "newSetOfURLs: ";
+    (*newSetOfURLs).display();
+
+    cin >> numPages; // counts how many pages were reading in
+    cout << "\n" << "Number of websites: " << numPages << "\n" << endl;
+
+    // create the myLinkStructure array to store all URLLink objects
+    URLLinks *myLinkStructure = new URLLinks[numPages];
+
+    for (int i = 0; i < numPages; i++) {// read all URLs and store them in the myLinkStructure array of URLLink objects
+        urlString = new myString(getNextURL());
+        URLLinks *trackURL = new URLLinks(*urlString, 0);
+        myLinkStructure[i] = *trackURL;
+    }
+
+    // store the neighbors/hyperlinks of each page/URL
+    for (int i = 0; i < numPages; i++) {
+        cin >> pageNo >> numNeighbors; // reads how many neighbors each link has
+        myLinkStructure[i].setNeighbors(numNeighbors);
+        for (int j = 0; j < numNeighbors; j++) {
+            cin >> neighbor; // reads the neighbor
+            myLinkStructure[pageNo].addNeighbor((myLinkStructure[neighbor])); // adds neighbor into structure
+        }
+    }
+
+    cout << "~~~Webpages and the links they contain:" << endl;
+    for (int i = 0; i < numPages; i++) {
+        // read all URL and store them in the myLinkStructure array of URLLink objects
+        cout << "\n" << myLinkStructure[i].getURL() << ": " << "\n"; // prints links in order of being added
+        for (int j = 0; j < myLinkStructure[i].getNumLinks(); j++)
+        {
+            cout << "** " << myLinkStructure[i].getHyperLink(j)->getURL() << endl; // prints contained links
+        }
+    }
+
+    cout << "\n" << "~~~Webpages and the number and URL of pages that contain links to them:" << endl;
+    for (int i = 0; i < numPages; ++i) {
+        int count = 0;
+        myString *temp = new myString; // creates myString array
+        *temp = myLinkStructure[i].getURL(); // sets value of temp equal to the URL found at the index of the structure
+
+        for (int j = 0; j < numPages; ++j)
+        {
+            for (int k = 0; k < myLinkStructure[j].getNumLinks(); ++k)
+            {
+                if (myLinkStructure[j].getHyperLink(k)->getURL() == *temp)  // ensures the hyperlinks being added actually is linked on that structure in index
+                {
+                    ++count; // increments count to make sure the number of links associated is correct
+                }
+            }
+        }
+        cout << "\n" << myLinkStructure[i].getURL().getWord() << ": " << count << endl; //prints link to see what URLs it is hyperlinked on
+        for (int j = 0; j < numPages; ++j)
+        {
+            for (int k = 0; k < myLinkStructure[j].getNumLinks(); ++k)
+            {
+                if (*temp == myLinkStructure[j].getHyperLink(k)->getURL())
+                    cout << "** " << myLinkStructure[j].getURL() << endl; // prints the links that that URL is found as a hyperlink on
+            }
+        }
+    }
+    return 0;
+}
