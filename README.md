@@ -1,2 +1,3 @@
 # Data-Structures2413
-Notes and in class info for C S 2413
+Links to projects practicing Data Structures
+
